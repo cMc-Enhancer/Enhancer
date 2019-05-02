@@ -13,7 +13,7 @@
     
     <meta name="author" content="Enhancer"> 
     <link rel="alternative" href="atom.xml" title="cMc" type="application/atom+xml"> 
-    <link rel="icon" href="/img/favicon.ico"> 
+    <link rel="icon" href="/img/favicon.png"> 
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
     <link rel="stylesheet" href="/css/diaspora.css">
 </head>
@@ -58,11 +58,10 @@
 </div>
 
 <div id="container">
-    
-<div id="screen">
+    <div id="screen">
     <div id="mark">
         <div class="layer" data-depth="0.4">
-            <img src="/img/welcome-cover.png" id="cover" crossorigin="anonymous" width="1920" height="1080">
+            <img src="/img/welcome-cover.jpg" id="cover" crossorigin="anonymous" width="1920" height="1080">
         </div>
     </div>
     <div id="vibrant">
@@ -76,19 +75,29 @@
             <div class="icon-menu switchmenu"></div>
         </div>
     </div>
-    
     <div id="post0">
-        <p>五月 01, 2019</p>
-        <h2><a href="/2019/05/01/Hibernate懒加载/" title="Hibernate懒加载" class="posttitle">Hibernate懒加载</a></h2>
-        <p class="summary">问题Hibernate OneToOne双向关联没有外键的一方不能Lazy加载
-原因
-hibernate默认使用代...</p>
+        <h2>どうして、私に</h2>
+        <h2>カゴの開け方を教えたのですか?</h2>
     </div>
-    
 </div>
 
     <div id="primary">
         
+<div class="post">
+    <a href="/2019/05/01/Hibernate懒加载/" title="Hibernate懒加载">
+        <img src="/img/liz.jpg" class="cover" width="680" height="440">
+    </a>
+    <div class="else">
+        <p>五月 01, 2019</p>
+        <h3><a href="/2019/05/01/Hibernate懒加载/" title="Hibernate懒加载" class="posttitle">Hibernate懒加载</a></h3>
+        <p>问题Hibernate OneToOne双向关联没有外键的一方不能Lazy加载
+原因
+hibernate默认使用代理（Javassist实现）实现懒加载
+...</p>
+    </div>
+</div>
+
+
     </div>
     
 </div>
