@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Equals implementation of Hibernate Entity - cMc</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Enhancer,"> 
+    <meta name="description" content="结论先行
+假如不存在把Entity作为Key放进HashSet/HashMap等集合的情况下，可以不实现equals()与hashCode()
+假如只会将处于persistent state的Ent,"> 
+    <meta name="author" content="Enhancer"> 
+    <link rel="alternative" href="atom.xml" title="cMc" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">cMc</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://cMc-Enhancer.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Equals implementation of Hibernate Entity</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">Equals implementation of Hibernate Entity</h1>
+        <div class="stuff">
+            <span>十二月 02, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Hibernate/">Hibernate</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Java/">Java</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="结论先行"><a href="#结论先行" class="headerlink" title="结论先行"></a>结论先行</h1><ol>
+<li>假如不存在把Entity作为Key放进<code>HashSet</code>/<code>HashMap</code>等集合的情况下，可以不实现<code>equals()</code>与<code>hashCode()</code></li>
+<li>假如只会将处于<a href="https://vladmihalcea.com/a-beginners-guide-to-jpa-hibernate-entity-state-transitions/" target="_blank" rel="noopener"><strong>persistent state</strong></a>的Entity作为Key放进<code>HashSet</code>/<code>HashMap</code>等集合，且也只使用<strong>persistent state</strong>的Entity作为Key对这些集合进行操作的情况下，也可以不实现<code>equals()</code>与<code>hashCode()</code>。（Hibernate一级缓存会保证代表同一数据行的实体的引用唯一）</li>
+<li>如果需要实现<code>equals()</code>，需要使用<code>instanceof</code>而非<code>getClass()</code>进行类比较。IntelliJ IDEA的<em>code-generate-equalsAndHashCode</em>菜单可以接受参数<em>Accept subclasses as parameter to equals() method</em>，勾选后生成的<code>equals()</code>方法也会使用<code>instanceof</code>。lombok实现的<code>equals</code>方法使用的即为<code>instanceof</code>，因此可以放心使用。</li>
+</ol>
+<h1 id="实体类代码"><a href="#实体类代码" class="headerlink" title="实体类代码"></a>实体类代码</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@lombok</span>.EqualsAndHashCode(onlyExplicitlyIncluded = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Child</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="meta">@lombok</span>.EqualsAndHashCode.Include</span><br><span class="line">    <span class="meta">@ManyToOne</span>(fetch = FetchType.LAZY)</span><br><span class="line">    <span class="meta">@JoinColumn</span>(name = <span class="string">"parent_id"</span>)</span><br><span class="line">    <span class="keyword">private</span> Parent parent;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == o) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Parent that = (Parent) o;</span><br><span class="line">        <span class="keyword">return</span> getId().equals(that.getId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Parent</code>实体实际上是存储在数据库内的静态数据，在代码中只有读取操作，因此以<code>id</code> field作为比较参数是合理的。</p>
+<p>同时<code>Parent</code>作为<code>Child</code>的业务主键的一部分，也通过lombok注解<code>@EqualsAndHashCode</code>加入到了<code>Child</code>类的<code>equals</code>判断逻辑中。<code>@EqualsAndHashCode</code>默认将被注解的类中所有field添加进<code>equals</code>方法比较逻辑中。而默认值为false的<code>onlyExplicitlyIncluded</code>参数只会将被<a href="mailto:`@EqualsAndHashCode.Include" target="_blank" rel="noopener">`@EqualsAndHashCode.Include</a><code>注解的field添加进</code>equals`方法中。</p>
+<p><code>Child</code>作为<code>Child</code>到<code>Parent</code>的<code>ManyToOne</code>的<a href="https://stackoverflow.com/questions/2749689/what-is-the-owning-side-in-an-orm-mapping" target="_blank" rel="noopener"><strong>owning side</strong></a>具有外键<code>parent_id</code>指向<code>Parent</code>的主键<code>id</code>，因此无论<code>FetchType</code>是<code>EAGER</code>还是<code>LAZY</code>，<code>child.getParent().getId()</code>都可以正常执行。</p>
+<h1 id="问题场景"><a href="#问题场景" class="headerlink" title="问题场景"></a>问题场景</h1><ol>
+<li><p>在<code>Child</code>实体创建或更新的业务逻辑中，先从数据库查询现在已经存在的<code>Child</code>，并存放在<code>Map</code>中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Child, Child&gt; childsMap = childRepository.findAll()</span><br><span class="line">    .stream().collect(Collectors.toMap(c -&gt; c, c -&gt; c));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建新的<code>Child</code>对象，通过判断从<code>Map</code>中取得的value是否为null判断是否存在，如果不存在则作为新增的数据保存，否则执行更新</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Child newChild = childService.produceNewChild();</span><br><span class="line">Child existingChild = childsMap.get(newChild);</span><br><span class="line"><span class="keyword">if</span> (existingChild == <span class="keyword">null</span>) &#123;</span><br><span class="line">   entityManager.persist(newChild);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   existingChild.updateFrom(newChild);</span><br><span class="line">   entityManager.merge(existingChild);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实际执行时出现了问题，Hibernate抛出了<code>MySQLIntegrityConstraintViolationException</code>，提示执行<code>entityManager.persist(newChild)</code>时违反了数据库唯一索引约束。</p>
+</li>
+</ol>
+<h1 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h1><ol>
+<li>第一反应是类中注解加错了，<a href="mailto:`@EqualsAndHashCode.Include" target="_blank" rel="noopener">`@EqualsAndHashCode.Include</a><code>注解的field比唯一索引中字段更多，导致新旧实体的业务主键虽然相同，但</code>hashCode()<code>不相同，</code>equals()<code>也不为</code>true`。仔细检查了一下排除该问题</li>
+<li><p>查看了一下<code>Collectors.toMap(Function keyMapper, Function valueMapper)</code>的源码，确定其使用的是我们熟悉的<code>HashMap</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U&gt;</span><br><span class="line">Collector&lt;T, ?, Map&lt;K,U&gt;&gt; toMap(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">                                Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper) &#123;</span><br><span class="line">    <span class="keyword">return</span> toMap(keyMapper, valueMapper, throwingMerger(), HashMap::<span class="keyword">new</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>Map</code>实现没问题，问题肯定还在<code>equals()</code>和<code>hashCode()</code>上。首先找到有问题的数据，删掉数据库里其它干扰数据。加了几行代码debug看看实际的输出</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Child newChild = childService.produceNewChild();</span><br><span class="line">Child existingChild = childsMap.get(newChild);</span><br><span class="line"><span class="keyword">if</span> (existingChild == <span class="keyword">null</span>) &#123;</span><br><span class="line">   existingChild = childsMap.keySet().iterator().next();</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">boolean</span> isHashCodesEqual = existingChild.hashCode() == newChild.hashCode(); <span class="comment">// true</span></span><br><span class="line">   <span class="keyword">boolean</span> isEntitiesEqual = existingChild.equals(newChild); <span class="comment">// true</span></span><br><span class="line">   Child child1 = childsMap.get(existingChild); <span class="comment">// existingChild</span></span><br><span class="line">   Child child2 = childsMap.get(newChild); <span class="comment">// null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>奇怪的事情发生了，hashCode相等，<code>equals()</code>返回的也是<code>true</code>，但是两次<code>get()</code>返回的结果却不一样。首先可以确认的是<code>hashCode()</code>方法的实现是没问题的，这也可以判断目前的问题不是由于【在把child放进map之后它的hashCode发生变化】引起的，否则<code>childsMap.get(existingChild)</code>也应返回<code>null</code>。</p>
+<ol start="4">
+<li><p>hashCode没问题，问题只能在<code>equals()</code>上了。下一步将断点打到了<code>HashMap</code>中，观察<code>childsMap.get(newChild)</code>在执行中究竟发生了什么才会返回null。终于有了线索，在执行到<code>Parent#equals</code>的这行代码时方法直接返回了<code>false</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>debug模式查看当前栈帧，this指向的是newChild，而传入<code>equals()</code>的参数则是一个Hibernate提供的代理类实现包裹着的<code>Child</code>。</p>
+</li>
+</ol>
+<p>由于<code>parent</code>是<code>FetchType.LAZY</code>的一个需要Hibernate进行懒加载的field，Hibernate在加载<code>Child</code>时会使用一个代理对象放在对应的field中，以便真正需要读取<code>parent</code>中数据时再进行加载。</p>
+<p>问题到这里已经可以解决了，<code>Object#getClass</code>返回的是对象的运行时类型，通过这个方法比较的两个对象必须是完全相同的类；使用<code>instanceof</code>替代则可以将条件放宽，如果是目标类的子类也可以通过判断。<a href="https://stackoverflow.com/questions/4989818/instanceof-vs-getclass" target="_blank" rel="noopener">参考此链接</a></p>
+<ol start="6">
+<li>但还有些疑惑没有解开：<ol>
+<li>为什么<code>childsMap.get(existingChild)</code>可以正常获取出value呢？</li>
+<li>为什么<code>existingChild.equals(newChild)</code>返回的是<code>true</code>呢？</li>
+</ol>
+</li>
+<li>第一个问题的解答在<code>HashMap#getNode</code>中：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> Node&lt;K,V&gt; <span class="title">getNode</span><span class="params">(<span class="keyword">int</span> hash, Object key)</span> </span>&#123;</span><br><span class="line">    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; first, e; <span class="keyword">int</span> n; K k;</span><br><span class="line">    <span class="keyword">if</span> ((tab = table) != <span class="keyword">null</span> &amp;&amp; (n = tab.length) &gt; <span class="number">0</span> &amp;&amp;</span><br><span class="line">        (first = tab[(n - <span class="number">1</span>) &amp; hash]) != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (first.hash == hash &amp;&amp; <span class="comment">// always check first node</span></span><br><span class="line">            ((k = first.key) == key || (key != <span class="keyword">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">            <span class="keyword">return</span> first;</span><br><span class="line">        <span class="keyword">if</span> ((e = first.next) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (first <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                <span class="keyword">return</span> ((TreeNode&lt;K,V&gt;)first).getTreeNode(hash, key);</span><br><span class="line">            <span class="keyword">do</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                    ((k = e.key) == key || (key != <span class="keyword">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                    <span class="keyword">return</span> e;</span><br><span class="line">            &#125; <span class="keyword">while</span> ((e = e.next) != <span class="keyword">null</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>在调用<code>equals()</code>之前会直接通过<code>==</code>比较hashTable中的key与传入的key的引用。debug时使用的是<code>map.keySet()</code>中的key，自然是同一引用。</p>
+<ol start="8">
+<li>第二个问题则是代理的特性。很不巧的是debug过程中一时疏漏只浅显地测试了<code>existingChild.equals(newChild)</code>，而没有及时想起<code>equals()</code>的实现规则：<ol>
+<li>Reflexive: <code>x.equals(x) == true</code>, an object must equal to itself.</li>
+<li>Symmetry: if<code>(x.equals(y)==true)</code> then <code>y.equals(x) == true</code>.</li>
+<li>Transitive: if <code>x.equals(y)</code> and <code>y.equals(z)</code>; then <code>x.equals(z)</code></li>
+<li>Consistent: if <code>x.equals(y)==true</code> and no value is modified, then it’s always true for every call</li>
+<li>For any non-null object x, <code>x.equals(null)==false</code></li>
+</ol>
+</li>
+</ol>
+<p>通过新加两行代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">boolean</span> isSymmetic = newChild.equals(existingChild); <span class="comment">// false</span></span><br><span class="line"><span class="keyword">boolean</span> isReflexive = existingChild.equals(existingChild); <span class="comment">// false</span></span><br></pre></td></tr></table></figure></p>
+<p>立马可知该equals实现在当前场景下是不适用的。</p>
+<p>当调用代理对象的<code>equals()</code>方法时，代理对象拦截了调用，并将调用委派至被代理的原始对象。因此在进行<code>existingChild.equals</code>调用时，最后真正执行equals方法的是被代理的<code>Child</code>类的原始对象，而被比较的<code>newChild</code>也是<code>Child</code>类的对象。</p>
+<p>可在<code>newChild.equals(existingChild)</code>，<code>existingChild.equals(existingChild)</code>，以及<code>HashMap#getNode</code>中调用的<code>key.equals(k)</code>（key为传入的newChild，k为存在hashTable中的existingChild）这三处调用中，代理对象existingChild作为参数被传入，直接被调用了<code>Object#getClass</code>进行了比较，最终导致了结果与预期的差异。</p>
+<h1 id="参考阅读"><a href="#参考阅读" class="headerlink" title="参考阅读"></a>参考阅读</h1><p><a href="https://vladmihalcea.com/the-best-way-to-implement-equals-hashcode-and-tostring-with-jpa-and-hibernate/" target="_blank" rel="noopener">https://vladmihalcea.com/the-best-way-to-implement-equals-hashcode-and-tostring-with-jpa-and-hibernate/</a></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://music.163.com/song/media/outer/url?id=528484544.mp3"></li>
+                    
+                        <li title="1" data-url="http://music.163.com/song/media/outer/url?id=33111211.mp3"></li>
+                    
+                        <li title="2" data-url="http://music.163.com/song/media/outer/url?id=526101400.mp3"></li>
+                    
+                        <li title="3" data-url="http://music.163.com/song/media/outer/url?id=32272663.mp3"></li>
+                    
+                        <li title="4" data-url="http://music.163.com/song/media/outer/url?id=526103091.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="false" data-ci="950f83c861604d6a6bd3" data-cs="eb99ef07f83ce12506511020ff04384b35e3f201" data-r="cMc-Enhancer.github.io" data-o="cMc-Enhancer" data-a="cMc-Enhancer" data-d="false">查看评论</div>
+
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#结论先行"><span class="toc-number">1.</span> <span class="toc-text">结论先行</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实体类代码"><span class="toc-number">2.</span> <span class="toc-text">实体类代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#问题场景"><span class="toc-number">3.</span> <span class="toc-text">问题场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#排查"><span class="toc-number">4.</span> <span class="toc-text">排查</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考阅读"><span class="toc-number">5.</span> <span class="toc-text">参考阅读</span></a></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-139406135-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>
