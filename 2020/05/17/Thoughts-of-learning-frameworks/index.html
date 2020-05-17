@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>关于学习开发框架的思考与常用框架介绍 - cMc</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Enhancer,"> 
+    <meta name="description" content="关于开发框架最近团队来了几乎没有任何开发经验的新手，为了能为其上手提供帮助，回想了自己当年初识SpringBoot那迷茫而又困惑的时光。为了能够以浅显的语言表述开发框架的作用，结合一年多来自己的理解,"> 
+    <meta name="author" content="Enhancer"> 
+    <link rel="alternative" href="atom.xml" title="cMc" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">cMc</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://cMc-Enhancer.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">关于学习开发框架的思考与常用框架介绍</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">关于学习开发框架的思考与常用框架介绍</h1>
+        <div class="stuff">
+            <span>五月 17, 2020</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Java/">Java</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="关于开发框架"><a href="#关于开发框架" class="headerlink" title="关于开发框架"></a>关于开发框架</h1><p>最近团队来了几乎没有任何开发经验的新手，为了能为其上手提供帮助，回想了自己当年初识<code>SpringBoot</code>那迷茫而又困惑的时光。为了能够以浅显的语言表述开发框架的作用，结合一年多来自己的理解，进行了一些思考。</p>
+<p>首先是Wikipedia上对于开发框架Software Framework的定义：</p>
+<blockquote>
+<p>In computer programming, a software framework is an abstraction in which software providing generic functionality can be selectively changed by additional user-written code, thus providing application-specific software.</p>
+</blockquote>
+<p>用Java来类比，我认为开发框架就是抽象类。它们对各色各样的软件中必备、关键、繁琐的部分进行了抽象，规定下了通用的流程，而更靠近业务领域的一侧则留白给了developer填充自己的项目的逻辑。</p>
+<p>而给新手带来困扰之处在于，一个开发框架留白之处常常显得支离破碎，在不了解框架定义的流程的初期，直接阅读项目代码无法捋顺完整的执行过程。毕竟这就是框架的初衷：剥离千篇一律的（意味着不论怎样的项目都是相类似的，也就意味着默认了绝大部分开发者都是对其了解的）<strong>技术流程</strong>，使得商业应用的程序员能够专注于自己的项目的<strong>业务逻辑</strong>，创造更多商业价值。</p>
+<h1 id="常用开发框架介绍"><a href="#常用开发框架介绍" class="headerlink" title="常用开发框架介绍"></a>常用开发框架介绍</h1><h2 id="以Web应用框架（SpringBoot-Web）举例"><a href="#以Web应用框架（SpringBoot-Web）举例" class="headerlink" title="以Web应用框架（SpringBoot-Web）举例"></a>以Web应用框架（SpringBoot-Web）举例</h2><blockquote>
+<p> 一个Web应用程序，最为核心关键的流程就是将浏览器客户端发送的请求传递到正确的Controller方法进行处理，再将响应返回。</p>
+</blockquote>
+<p>更为具体一点，以一个完整的URL<code>http://192.168.101.231:8080/index</code>来分析：</p>
+<ol>
+<li><code>http://</code>描述了这一次访问使用的<strong>协议</strong>，也就是你会以怎样的方式进行沟通（想象成找人谈话时使用的语言）</li>
+<li><code>192.168.101.231</code>是<strong>IP地址</strong>，描述了你想要请求的服务器的地址（尽管平常我们直接使用的都是网址，但网址本质上也会经过DNS解析最终变为IP地址）。这就像通过地址找到一栋大楼</li>
+<li><code>:8080</code>指的是服务器上的<strong>端口</strong>。每台服务器上可能有很多程序运行着，当它们都需要网络接入的时候就必须用端口区分具体找的是哪个程序。端口就好比大楼的楼层，每个楼层都有不同的公司。因此<code>IP+端口</code>的组合就可以在互联网上定位到一个具体的程序了</li>
+<li><code>/index</code>这最后的<strong>路径</strong>部分就是<code>Web应用程序</code>要处理的部分了，好比在公司的楼层内找寻不同的员工（controller方法）询问问题</li>
+</ol>
+<p>用<code>IntelliJ IDEA</code>新建项目<code>File-&gt;New-&gt;Project-&gt;Spring Initializr-&gt;Dependencies中勾选Web-Spring Web</code>，直接运行<code>main</code>方法就可以立即启动一个<strong>除非主动关闭，否则就可以一直运行下去的Web后端服务程序</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(DemoApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这就是刚学习完语言基础语法，写的算法题的解答代码可以从<code>main</code>方法开始一步一步走完并且最终结束，现在初识开发框架的新手第一个会迷茫的地方：绝大多数软件项目都是以永不停歇的<strong>服务</strong>的方式运行着，<code>main</code>方法虽然还是一切的开始，但是程序启动之后打出了一片日志，然后就陷入了沉寂——但也没有停止运行。当你尝试看看随后紧跟的就是框架本身代码的汪洋大海<code>SpringApplication.run()</code>，这片大海中包含着你的项目可以永远运行下去的奥秘。事实上，可能大多数项目的<code>main</code>方法——看起来——就只做了这一件事，启动服务，无他。</p>
+<p>若是习惯了Ctrl+左键来一点点阅读代码，此时一定陷入了迷茫：找不到地方可以到达项目中其它代码。项目中的代码（<code>main</code>方法）和代码（其余代码）之间被割裂，填充在裂痕之中的还是深不可测的<code>SpringBoot</code>的代码。</p>
+<p>这时就需要再回过头去看本篇开头的话：一个Web后端程序最核心的流程是什么？当服务成功启动之后，接下来才是重头戏——接待来自各个不同源头的客户端发来的各色各样的请求。事实上，在这种处理流程下，我们可以认为每一个Controller方法就成了一段处理流程的起点。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/index"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"hello"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>新增一个简单的Controller类，配以<code>@RestController</code>, <code>@GetMapping</code>寥寥两个注解，重启应用后就能在浏览器上访问<code>localhost:8080/index</code>并且看到返回的<code>Json</code>响应数据了。</p>
+<p>现在，摆在眼前的是两条路：</p>
+<ol>
+<li>想要熟悉项目业务逻辑的，就可以把发送请求后发生的一切当作理所应当，从进入Controller方法之后开始逐步阅读项目中的代码/上手干活儿了；</li>
+<li>但，保持一定的好奇心也是必要的——看起来简单的流程背后有太多事情已经发生了。对框架的行为一无所知会时常导致开发者错用框架的功能，甚至引发严重的问题。<ul>
+<li>请求路径是如何被识别并路由到相应的方法的？</li>
+<li>不同的HTTP请求方法是怎样被路由到相应的方法的？（尝试再增加一个方法并且用<code>@PostMapping</code>注解）</li>
+<li>是谁实例化我的<code>IndexController</code>类为对象，并且调用我的实例方法（<code>sayHello()</code>）的？</li>
+<li>附录中还介绍了更多功能</li>
+</ul>
+</li>
+</ol>
+<p>接下来会再介绍一些开发框架的核心功能与简单实用示例，但也会抛出一些问题作为深入学习它们的切入点。</p>
+<blockquote>
+<p>其实不存在一个开发框架叫SpringBoot-Web，SpringBoot网罗了一大堆开发框架在内，并且提供了简单易用的默认配置。此处指的是包含了Spring，SpringMVC框架并内嵌了tomcat Web服务器的SpringBoot-Web“框架包”。章节中重点提及的Web请求路由、响应的功能其实是SpringMVC框架所提供的。</p>
+</blockquote>
+<h2 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h2><blockquote>
+<p>Spring最为核心本质的定义是一个<code>IoC</code>（inversion of control）容器。而<code>IoC</code>控制反转这个概念存在的意义则是为了提供对<strong>对象</strong>的创建、配置、销毁等（统称为<strong>生命周期</strong>）的管理，从根本上改变使用者对这些对象的获取方法。</p>
+</blockquote>
+<p>再把以上的描述限定到最为常见的场景，可以简化为：Spring去除了项目中的<code>new</code>关键字。当你需要一个对象的时候，用<code>@Autowired</code>向Spring讨一个就行了。Spring好比租房的中介平台，有房东提供了房源，有租客需求房源。Spring的出现使得房东和租客不再需要互相认识，大家都找平台就行了。</p>
+<p>复用上面SpringBoot项目的代码（SpringBoot中包含了Spring，因此不需要做什么依赖方面的改动）来举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TextHelper</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">concatString</span><span class="params">(String s1, String s2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> s1 + s2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>新建的类被<code>@Component</code>注解了，这意味着这个类将会被Spring管理，也就意味着之后你可以在其它地方，比如之前写过的controller中，向Spring讨要<code>TextHelper</code>类的实例对象了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Index</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> TextHelper textHelper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/index"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHelloWorld</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> textHelper.concatString(<span class="string">"hello"</span>, <span class="string">"world"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时访问<code>localhost:8080/index</code>已经可以看到拼接后的”helloworld”了，尽管我们从未根据传统使用<code>new TextHelper()</code>实例化对象。是Spring在幕后某处创建了这个对象，并且根据我们的要求（<code>@Autowired</code>）把它创建好了的这个对象<strong>注入</strong>了进来。</p>
+<p>要留意的是<code>@RestController</code>这个注解也包含了<code>@Component</code>的功能；换句话说，<code>Index</code>类此时也是被Spring管理的。仔细想想其实非常简单：房东和租客都需要在平台上注册了，平台才能把房东的房子顺利地租给租客嘛。</p>
+<blockquote>
+<p><strong>但是！</strong></p>
+<p>Spring可以，并不代表着所有的Java类的实例化和获取都该交由Spring来处理。一般来说，只有注重于提供功能（方法调用）的Java类（又称为<strong>Java Bean</strong>）会交由Spring管理；而注重于数据存储的Java类（比如<strong>POJO</strong>）则不会，它们只是单纯的数据的载体。</p>
+</blockquote>
+<p>关于Spring可能会有成吨的问题：</p>
+<ul>
+<li>Spring是怎么知道哪些类需要它来创建对象？</li>
+<li>Spring是怎么创建对象的？</li>
+<li>Spring根据怎样的流程创建对象？我们能干预这些流程吗？</li>
+<li>假如有多处地方需求同一种对象，最后它们获取到的会是同一个对象引用吗？</li>
+<li>除了直接在Field上注解，还有别的讨要依赖的方式吗？</li>
+<li>……</li>
+</ul>
+<h2 id="Quartz"><a href="#Quartz" class="headerlink" title="Quartz"></a>Quartz</h2><blockquote>
+<p>Quartz是一个定时任务调度框架。简单地讲就是根据配置的时间参数，自动调用配置好的目标方法。</p>
+</blockquote>
+<p>Quartz使用起来相对复杂的地方在于一个完整的定时任务调度流程分了三段进行配置。下面以我们实际使用的Spring/Quartz项目的配置文件为例。</p>
+<p>Quartz首先要求配置<code>JobDetail</code>用于描述定时任务被调度时执行哪个Java类的方法，比如我们希望这个定时任务执行<code>ScheduledJob</code>的<code>run()</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ScheduledJob</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相应的配置就会是下面这样：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.example.demo"</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--    &lt;bean id="scheduledJob" class="com.example.demo.ScheduledJob"/&gt;--&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"scheduledJobDetail"</span> <span class="attr">class</span>=<span class="string">"org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"</span>&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"targetObject"</span> <span class="attr">ref</span>=<span class="string">"scheduledJob"</span>/&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"targetMethod"</span> <span class="attr">value</span>=<span class="string">"run"</span>/&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"concurrent"</span> <span class="attr">value</span>=<span class="string">"false"</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>由于在配置中开启了<code>component-scan</code>（Spring的功能），而之前在<code>ScheduledJob</code>类上又添加了<code>@Component</code>注解，直接为<code>targetObject</code>这个property填入<code>ref=&quot;scheduledJob&quot;</code>后Quartz就能自动找到相应的类的对象了。当然也可以采用被注释的行的配置方法指定Java类。</p>
+<p><code>targetMethod</code>属性的value则指定了该在选择的类中寻找哪个方法执行。</p>
+<p><code>concurrent</code>属性的值则会影响调度任务是否会并发执行。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"scheduledJobTrigger"</span> <span class="attr">class</span>=<span class="string">"org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"jobDetail"</span> <span class="attr">ref</span>=<span class="string">"scheduledJobDetail"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"startDelay"</span> <span class="attr">value</span>=<span class="string">"1000"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"repeatInterval"</span> <span class="attr">value</span>=<span class="string">"10000"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>配置的第二层是时间触发器的配置。简单的时间触发器引用了刚才配置完的<code>jobDetail</code>，和任务初始的延迟时间<code>startDelay</code>，还有任务每次调度时的间隔时间<code>repeatInterval</code>，属性值的单位都是毫秒。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.scheduling.quartz.SchedulerFactoryBean"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"waitForJobsToCompleteOnShutdown"</span> <span class="attr">value</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"triggers"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">"scheduledJobTrigger"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"autoStartup"</span> <span class="attr">value</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最后一层则是配置了调度器，比如哪些触发器需要进行调度，调度器关闭时是否要等待被调度的任务运行完毕，以及是否自动启动。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Server</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ClassPathXmlApplicationContext quartzFactory;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">launch</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        log.info(<span class="string">"Data report server start..."</span>);</span><br><span class="line">        quartzFactory = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"classpath:serverContext.xml"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Server server = <span class="keyword">new</span> Server();</span><br><span class="line">        server.launch();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后是启动代码，读取了刚才配置的配置文件，随后Quartz就会自动启动，并且根据配置开始自动定时调度任务。</p>
+<h2 id="Hibernate"><a href="#Hibernate" class="headerlink" title="Hibernate"></a>Hibernate</h2><blockquote>
+<p>Hibernate是一个ORM框架，所谓ORM（object-relation mapping）是指将面向对象语言中的对象（object）与关系型（relation）数据库中的数据进行关联映射（mapping）的可逆过程，简单地说，可以方便程序员通过对对象的操作来操作数据。其核心的流程是在程序查询关系型数据库中时，把以表（行与列构成）的形式组织的数据自动转换成预先手动配置好的Java类的对象；又或者逆反此流程，将程序中创建的对象<strong>持久化</strong>到数据库。</p>
+</blockquote>
+<p>由于对象世界与关系型数据库的世界存在着非常大的差异，而数据处理又往往和业务交织在一起，流程中需要程序员介入的地方相较前面介绍的框架显得更多更复杂。<strong>JPA</strong>（可以理解为官方提供的标准接口，而Hibernate是第三方开发的实现）定义了一系列的接口与规范来帮助程序员完成这些过程。</p>
+<p>大多数情况下，我们并不是直接在使用Hibernate，而是通过JPA提供的接口在操作数据，就像我们使用集合接口一样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">list.add(<span class="number">1</span>);	<span class="comment">// 调用List接口方法</span></span><br></pre></td></tr></table></figure>
+<p>JPA就像<code>List</code>接口，而Hibernate就是它的一个实现，比如<code>ArrayList</code>。当项目创建，引入了Hibernate作为依赖，服务启动运行时Spring就会初始化并加载Hibernate。模拟这个过程就像如下的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// JPA提供接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">JPA</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Hibernate提供实现</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hibernate</span> <span class="title">implement</span> <span class="title">JPA</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 程序员自己编写的代码</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 通过Spring自动注入</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> JPA jpa;</span><br><span class="line">  </span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/index"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 使用JPA定义的接口方法</span></span><br><span class="line">        <span class="keyword">return</span> jpa.findSomethingFromDatabase();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总得来说，JPA的配置与使用主要分为两方面：</p>
+<h3 id="元数据映射（Mapping）"><a href="#元数据映射（Mapping）" class="headerlink" title="元数据映射（Mapping）"></a>元数据映射（Mapping）</h3><p>元数据映射指的是将Java类与数据库表进行关联，一般通过在Java类与字段上的注解来完成。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table</span>(name = <span class="string">"users"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span>(strategy = GenerationType.AUTO)</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"name"</span>)</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只有被<code>@Entity</code>注解的类会被认为是需要ORM框架介入并进行管理的。这也就意味着这个类的对象是可以进行持久化的，通常我们又叫这些类为Model或实体类。</p>
+<h3 id="实体操作"><a href="#实体操作" class="headerlink" title="实体操作"></a>实体操作</h3><p>JPA对实体对象的操作通过<code>javax.persistence.EntityManager</code>来进行。但是需要注意的是，实体对象必须处于<code>PersistenceContext</code>持久化上下文内，才能被<code>EntityManager</code>管理和操作。还是以租房平台为例子：当不在<code>PersistenceContext</code>时，实体对象只是一个普通简单的Java对象而已，就像一个尚未在平台中注册的用户。<code>EntityManager</code>此时就是租房平台的应用，当实体对象进入到<code>PersistenceContext</code>后，<code>EntityManager</code>才能发挥它的威力。</p>
+<p>关于实体对象在<code>PersistenceContext</code>中的状态，以及<code>EntityManager</code>能够采取的操作，在另一篇Blog <a href="https://cmc-enhancer.github.io/2019/12/26/The-persistence-life-cycle/">The persistence life cycle</a>中有更详细的解释。这里只举几个简单和重要的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserRepository</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">  	<span class="keyword">private</span> EntityManager entityManager;</span><br><span class="line">  </span><br><span class="line">  	<span class="comment">// 持久化一个刚才配置完映射的User对象实例到数据库</span></span><br><span class="line">  	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveUser</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	User user = <span class="keyword">new</span> User();</span><br><span class="line">      	entityManager.persist(user);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">  	<span class="comment">// 使用JPQL语法查找一个User并在修改其数据后保存</span></span><br><span class="line">  	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateUser</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      	String queryString = <span class="string">"SELECT u FROM User u WHERE u.id = :id AND u.name is null"</span>;</span><br><span class="line">      	User user = entityManager.createQuery(queryString, User.class)</span><br><span class="line">            .setParameter(<span class="string">"id"</span>, <span class="number">1L</span>)</span><br><span class="line">            .getSingleResult();</span><br><span class="line">      </span><br><span class="line">      	user.setName(<span class="string">"anotherName"</span>);</span><br><span class="line">      	entityManager.merge(user);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 使用SQL删除User</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteUser</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        entityManager.createNativeQuery(<span class="string">"DELETE FROM users"</span>).executeUpdate();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h1><h2 id="更多SpringBoot的使用例子"><a href="#更多SpringBoot的使用例子" class="headerlink" title="更多SpringBoot的使用例子"></a>更多SpringBoot的使用例子</h2><h3 id="尝试将Controller方法的返回类型改为ResponseEntity，并指定返回的HTTP状态"><a href="#尝试将Controller方法的返回类型改为ResponseEntity，并指定返回的HTTP状态" class="headerlink" title="尝试将Controller方法的返回类型改为ResponseEntity，并指定返回的HTTP状态"></a>尝试将Controller方法的返回类型改为<code>ResponseEntity</code>，并指定返回的HTTP状态</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/index"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.badRequest().body(<span class="string">"Cannot process this request"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>SpringBoot</code>做了怎样的工作处理<code>HttpResponse</code>?</p>
+<h3 id="尝试让Controller方法直接返回Model对象"><a href="#尝试让Controller方法直接返回Model对象" class="headerlink" title="尝试让Controller方法直接返回Model对象"></a>尝试让Controller方法直接返回Model对象</h3><p>先定义一个Model对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Model</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Model</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改一下Controller方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/model"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Model <span class="title">getModel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Model(<span class="string">"cat"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>去浏览器看看返回的数据长什么样</li>
+<li>很显然这也是框架的功劳</li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://music.163.com/song/media/outer/url?id=528484544.mp3"></li>
+                    
+                        <li title="1" data-url="http://music.163.com/song/media/outer/url?id=33111211.mp3"></li>
+                    
+                        <li title="2" data-url="http://music.163.com/song/media/outer/url?id=526101400.mp3"></li>
+                    
+                        <li title="3" data-url="http://music.163.com/song/media/outer/url?id=32272663.mp3"></li>
+                    
+                        <li title="4" data-url="http://music.163.com/song/media/outer/url?id=526103091.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="false" data-ci="950f83c861604d6a6bd3" data-cs="eb99ef07f83ce12506511020ff04384b35e3f201" data-r="cMc-Enhancer.github.io" data-o="cMc-Enhancer" data-a="cMc-Enhancer" data-d="false">查看评论</div>
+
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#关于开发框架"><span class="toc-number">1.</span> <span class="toc-text">关于开发框架</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#常用开发框架介绍"><span class="toc-number">2.</span> <span class="toc-text">常用开发框架介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#以Web应用框架（SpringBoot-Web）举例"><span class="toc-number">2.1.</span> <span class="toc-text">以Web应用框架（SpringBoot-Web）举例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring"><span class="toc-number">2.2.</span> <span class="toc-text">Spring</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quartz"><span class="toc-number">2.3.</span> <span class="toc-text">Quartz</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hibernate"><span class="toc-number">2.4.</span> <span class="toc-text">Hibernate</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#元数据映射（Mapping）"><span class="toc-number">2.4.1.</span> <span class="toc-text">元数据映射（Mapping）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实体操作"><span class="toc-number">2.4.2.</span> <span class="toc-text">实体操作</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#附录"><span class="toc-number">3.</span> <span class="toc-text">附录</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#更多SpringBoot的使用例子"><span class="toc-number">3.1.</span> <span class="toc-text">更多SpringBoot的使用例子</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#尝试将Controller方法的返回类型改为ResponseEntity，并指定返回的HTTP状态"><span class="toc-number">3.1.1.</span> <span class="toc-text">尝试将Controller方法的返回类型改为ResponseEntity，并指定返回的HTTP状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#尝试让Controller方法直接返回Model对象"><span class="toc-number">3.1.2.</span> <span class="toc-text">尝试让Controller方法直接返回Model对象</span></a></li></ol></li></ol></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-139406135-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>

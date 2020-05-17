@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hibernate懒加载 - cMc</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Enhancer,"> 
+    <meta name="description" content="问题Hibernate OneToOne双向关联没有外键的一方不能Lazy加载
+原因
+hibernate默认使用代理（Javassist实现）实现懒加载
+注解为需要懒加载的关联对象会先由hibern,"> 
+    <meta name="author" content="Enhancer"> 
+    <link rel="alternative" href="atom.xml" title="cMc" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">cMc</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://cMc-Enhancer.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Hibernate懒加载</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">Hibernate懒加载</h1>
+        <div class="stuff">
+            <span>五月 01, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Hibernate/">Hibernate</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Java/">Java</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>Hibernate OneToOne双向关联没有外键的一方不能Lazy加载</p>
+<h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1><ol>
+<li>hibernate默认使用代理（Javassist实现）实现懒加载</li>
+<li>注解为需要懒加载的关联对象会先由hibernate提供一个对应的代理，当访问该对象的属性时实际由代理响应，因此hibernate能够得知何时传来了访问请求，然后提交数据库查询获得数据值填入代理并且返回</li>
+<li>当关联关系为<em>ToMany时，当前实体拥有的是一个集合，存在关联对象时集合中便具有响应的元素，不存在关联对象时集合仍存在，只不过size()=0。因此需要懒加载时hibernate统一提供org.hibernate.collection下的集合用于拦截访问请求</em></li>
+<li><em>而当关联关系为</em>ToOne时，情况有所不同。若当前实体为关系维护方（外键所在方），查询该实体时hibernate就可以通过检查外键得知是否存在与其关联的实体，若存在则创建代理</li>
+<li>而对于没有外键的一方，hibernate不知道它的关联对象是否为空，也就不知道是否要创建代理对象（没有关联对象时应该为null）,”Hibernate cannot honor this request since it cannot know whether the association is null or not.”必须发起一次形如SELECT COUNT(1) FROM associate_table WHERE foreign_key= ${id}查询进行确认。因此hibernate选择默认强制直接EAGERLY将关联对象读取加载</li>
+<li>hibernate还有另一种手段提供懒加载的实现，即为字节码增强。通过在buildtime或runtime将代码织入实体类，可以在访问当前实体的getter、setter时就感知到并进行懒加载。</li>
+<li>但当使用字节码增强时，具体实体类继承自@MappedSuperClass的泛型属性无法被增强，导致hibernate根本无法感知是否访问了该属性，因此也就不会触发查询，访问时始终会获得null。与此链接较为相似（但不完全相同）。字节码增强与@MappedSuperClass相关的问题比较多且不好解决（很多也不准备解决）。并且由于字节码增强与动态代理并不能共存（待验证），无法为一个项目同时使用两种方案实现懒加载。</li>
+</ol>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><ul>
+<li><p>不使用字节码增强，将关联关系改为OneToMany与ManyToOne</p>
+<ol>
+<li>修改注解</li>
+<li>修改实体数据结构</li>
+<li>修改相应查询语句（join实体时改为复数）</li>
+<li>修改getter、setter</li>
+</ol>
+</li>
+<li><p>使用字节码增强</p>
+<ol>
+<li>添加hibernate字节码增强插件，启用enableLazyInitialization= true</li>
+<li>为需要懒加载的*ToOne一方添加注解@LazyToOne（LazyToOneOption.NO_PROXY )</li>
+<li>修改各应用了泛型的@MappedSuperClass注解的类，将泛型属性移动至子类</li>
+</ol>
+</li>
+<li><p>手动实现懒加载</p>
+</li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://music.163.com/song/media/outer/url?id=528484544.mp3"></li>
+                    
+                        <li title="1" data-url="http://music.163.com/song/media/outer/url?id=33111211.mp3"></li>
+                    
+                        <li title="2" data-url="http://music.163.com/song/media/outer/url?id=526101400.mp3"></li>
+                    
+                        <li title="3" data-url="http://music.163.com/song/media/outer/url?id=32272663.mp3"></li>
+                    
+                        <li title="4" data-url="http://music.163.com/song/media/outer/url?id=526103091.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="false" data-ci="950f83c861604d6a6bd3" data-cs="eb99ef07f83ce12506511020ff04384b35e3f201" data-r="cMc-Enhancer.github.io" data-o="cMc-Enhancer" data-a="cMc-Enhancer" data-d="false">查看评论</div>
+
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#问题"><span class="toc-number">1.</span> <span class="toc-text">问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原因"><span class="toc-number">2.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#解决方案"><span class="toc-number">3.</span> <span class="toc-text">解决方案</span></a></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-139406135-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>
