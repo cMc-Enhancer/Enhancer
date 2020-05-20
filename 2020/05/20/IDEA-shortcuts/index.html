@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IDEA常用快捷功能 - cMc</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Enhancer,"> 
+    <meta name="description" content="前言此处整理了个人较为高频使用的IDEA编辑功能，根据IDEA中主菜单分类。当忘记快捷键时可以去相应菜单下寻找。调整快捷键在File-&amp;gt;Settings-&amp;gt;Keymap-&amp;gt;Main,"> 
+    <meta name="author" content="Enhancer"> 
+    <link rel="alternative" href="atom.xml" title="cMc" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">cMc</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://cMc-Enhancer.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">IDEA常用快捷功能</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">IDEA常用快捷功能</h1>
+        <div class="stuff">
+            <span>五月 20, 2020</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Java/">Java</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>此处整理了个人较为高频使用的IDEA编辑功能，根据IDEA中主菜单分类。当忘记快捷键时可以去相应菜单下寻找。调整快捷键在<code>File-&gt;Settings-&gt;Keymap-&gt;Main menu</code>下。</p>
+<h1 id="Edit"><a href="#Edit" class="headerlink" title="Edit"></a>Edit</h1><ol>
+<li>Undo</li>
+<li>Redo</li>
+<li>Cut</li>
+<li>Copy</li>
+<li>Paste</li>
+<li>Find</li>
+<li>Replace</li>
+<li>Find next / Move to next occurrence<br> 搜索时便捷跳转至下一处</li>
+<li>Find previous / Move to previous occurrence</li>
+<li>Find in path  </li>
+<li>Replace in path</li>
+<li>Find usage<br>查找所有使用当前代码的上一级方法，并以单独对话框显示</li>
+<li>Select all</li>
+<li>Extend selection<br>扩展选择，便捷选中一个变量-&gt;一个表达式-&gt;一个方法。非常常用</li>
+<li>Shrink selection</li>
+<li>Complete current statement<br>自动补完当前表达式，如括号、分号，如果无需补全则会换到下一行。建议设为比较好按的快捷键比如Shift-Enter，使用习惯之后可以偷不少懒</li>
+<li>Join lines<br>将选中的多列合并到一行</li>
+<li>Duplicate line or selection</li>
+<li>Indent selection</li>
+<li>Toggle case</li>
+<li>Toggle camel / snake case<br>驼峰、下划线命名法切换</li>
+</ol>
+<h1 id="Navigate"><a href="#Navigate" class="headerlink" title="Navigate"></a>Navigate</h1><ol>
+<li>Class<br> 按类名查找。在熟悉的Java项目中最为常用的跳转功能</li>
+<li>File</li>
+<li>Symbol<br> 按语法符号搜索，如方法名、变量名</li>
+<li>Line<br> 输入行号在当前文件内跳转。查找报错时常用</li>
+<li>Back<br> 返回上一代码跳转处。阅读代码不断Ctrl+左键点击跳转阅读代码时常用，用于返回上一级</li>
+<li>Forward</li>
+<li>Declaration or usages<br> 在方法、变量等调用处使用可以查找定义，在定义处使用可以查找调用位置</li>
+<li>Implementaion<br> 查看接口、方法的实现</li>
+<li>Super method<br> 查看方法的超类方法</li>
+<li>Test<br>查看当前类的测试类</li>
+<li>Call hierarchy<br>分析当前方法的调用链（Find usage只有一层，这个可以溯源到顶层）。可以用于复杂底层方法的分析</li>
+<li>Next highlighted error</li>
+<li>Previous highlighted error</li>
+<li>Next change<br>跳转到当前文件下一个代码修改处</li>
+<li>Previous change</li>
+<li>Next method<br>跳转到下一个方法的方法名处</li>
+<li>Previous method</li>
+</ol>
+<h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><ol>
+<li>Override method<br> 选择并生成当前类中可以重写的方法</li>
+<li>Implement method<br> 选择并生成当前类中需要实现的接口/抽象方法。对类进行抽象重构时常用</li>
+<li>Generate<br> 自动生成构造方法、Getter等</li>
+<li>Surround with<br> 包裹选中的代码，生成try-catch或if等</li>
+<li>Folding<br> 折叠代码块</li>
+<li>Comment with line comment</li>
+<li>Reformat code</li>
+<li>Optimize import</li>
+<li>Auto-indent code<br> 以上三件打包使用，格式化代码，非常高频。建议养成时不时敲一下的习惯</li>
+<li>Move statement<br>移动代码块，如if语句，整个方法</li>
+<li>Move line<br>移动一行代码</li>
+</ol>
+<h1 id="Refactor"><a href="#Refactor" class="headerlink" title="Refactor"></a>Refactor</h1><ol>
+<li>Rename<br> 改名时必用，以保证重构不漏</li>
+<li>Change signature<br> 改变方法、字段的签名，如参数、返回值。重构时添加返回值或调整参数很方便</li>
+<li>Type migration<br> 改变字段类型</li>
+<li>Safe delete<br> 尝试安全删除。但一般可以安全删除的字段都是灰色的（无处使用），可以直接通过万用重构Show Context Actions进行Safe-delete</li>
+<li>Introduce variable<br> 将当前选中的表达式抽取成一个变量。非常好用，写代码时不再需要写变量定义了，直接写方法调用/表达式，写完后直接抽取成变量，省去了写变量类型定义的功夫</li>
+<li>Introduce constant<br> 同上，抽取成类常量</li>
+<li>Introduce field<br> 同上，抽取成类成员变量</li>
+<li>Introduce parameter<br> 同上，抽取成方法入参</li>
+<li>Extract method<br> 将当前选中的代码块抽取成一个方法，当当前逻辑包含多个返回值时会抽取失败</li>
+<li>Inline<br>将代码声明和调用合并</li>
+<li>Pull members up<br>将子类的变量、方法抽取到父类</li>
+</ol>
+<h1 id="神器"><a href="#神器" class="headerlink" title="神器"></a>神器</h1><ol>
+<li>Show Context Actions<br> 万用重构按键。当代码变色（出现warning）时在代码上使用一般都会提供自动的修改方案</li>
+</ol>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://music.163.com/song/media/outer/url?id=528484544.mp3"></li>
+                    
+                        <li title="1" data-url="http://music.163.com/song/media/outer/url?id=33111211.mp3"></li>
+                    
+                        <li title="2" data-url="http://music.163.com/song/media/outer/url?id=526101400.mp3"></li>
+                    
+                        <li title="3" data-url="http://music.163.com/song/media/outer/url?id=32272663.mp3"></li>
+                    
+                        <li title="4" data-url="http://music.163.com/song/media/outer/url?id=526103091.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="false" data-ci="950f83c861604d6a6bd3" data-cs="eb99ef07f83ce12506511020ff04384b35e3f201" data-r="cMc-Enhancer.github.io" data-o="cMc-Enhancer" data-a="cMc-Enhancer" data-d="false">查看评论</div>
+
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Edit"><span class="toc-number">2.</span> <span class="toc-text">Edit</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Navigate"><span class="toc-number">3.</span> <span class="toc-text">Navigate</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Code"><span class="toc-number">4.</span> <span class="toc-text">Code</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Refactor"><span class="toc-number">5.</span> <span class="toc-text">Refactor</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#神器"><span class="toc-number">6.</span> <span class="toc-text">神器</span></a></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-139406135-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>
