@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>阿里云聚石塔云原生改造 - cMc</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Enhancer,"> 
+    <meta name="description" content="阿里云聚石塔云原生迁移项目结构
+Java单体应用，使用Spring+Quartz+Hibernate
+Ruby on Rails的Web服务
+Ruby on Rails应用安装了Delayed Jo,"> 
+    <meta name="author" content="Enhancer"> 
+    <link rel="alternative" href="atom.xml" title="cMc" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">cMc</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://cMc-Enhancer.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">阿里云聚石塔云原生改造</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">阿里云聚石塔云原生改造</h1>
+        <div class="stuff">
+            <span>七月 18, 2020</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <h1 id="阿里云聚石塔云原生迁移"><a href="#阿里云聚石塔云原生迁移" class="headerlink" title="阿里云聚石塔云原生迁移"></a>阿里云聚石塔云原生迁移</h1><h1 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h1><ul>
+<li>Java单体应用，使用Spring+Quartz+Hibernate</li>
+<li>Ruby on Rails的Web服务</li>
+<li>Ruby on Rails应用安装了Delayed Job gem，单独运行一个服务，专门处理Excel表格导入导出</li>
+<li>MySQL。因为业务原因，处理的都是淘宝店家的数据，各个店铺数据天然隔离，因此很自然采用水平分库。没有采用MyCat等中间件，Web端手撸了一个简单的中间件处理多数据源切换。Java服务则是每个进程对应一个MySQL实例，不存在多数据源切换</li>
+</ul>
+<h1 id="改造前"><a href="#改造前" class="headerlink" title="改造前"></a>改造前</h1><p>通过阿里云ECS部署（即虚拟机部署），购置多台ECS，分别部署Java进程和Ruby on Rails进程。MySQL则是购买阿里云RDS实例，无需部署。</p>
+<h2 id="Java部署"><a href="#Java部署" class="headerlink" title="Java部署"></a>Java部署</h2><ol>
+<li><p>由于是定时器调度执行后台任务，系统内设置了调度执行的开关，在部署前首先关闭开关，防止有任务在部署时被调度</p>
+</li>
+<li><p>本地代码合并后打包复制到跳板机（线上唯一一台开放SSH端口的服务器）</p>
+</li>
+<li><p>在跳板机运行脚本，解压，将jar包分发、复制到各个服务器的部署目录下，目录层次大致如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── current -&gt; releases/20201118203840</span><br><span class="line">├── releases</span><br><span class="line">│   ├── 20201104212202</span><br><span class="line">│   │   ├── ......</span><br><span class="line">│   └── 20201118203840</span><br><span class="line">│   │   ├── config -&gt; /var/javaapp/server/shared/config</span><br><span class="line">│   │   ├── server-1.0.jar</span><br><span class="line">│   │   ├── <span class="built_in">log</span> -&gt; /var/javaapp/server/shared/<span class="built_in">log</span></span><br><span class="line">│   │   ├── pids -&gt; /var/javaapp/server/shared/pids</span><br><span class="line">│   │   ├── start.sh -&gt; /var/javaapp/server/shared/script/start.sh</span><br><span class="line">│   │   ├── stop.sh -&gt; /var/javaapp/server/shared/script/stop.sh</span><br><span class="line">└── shared</span><br><span class="line">    ├── config</span><br><span class="line">    │   └── application.properties</span><br><span class="line">    ├── libs</span><br><span class="line">    │   ├── ......</span><br><span class="line">    ├── <span class="built_in">log</span> -&gt; /var/<span class="built_in">log</span>/server/</span><br><span class="line">    ├── pid</span><br><span class="line">    │   ├── server.pid</span><br><span class="line">    └── script</span><br><span class="line">        ├── start.sh</span><br><span class="line">        ├── stop.sh</span><br></pre></td></tr></table></figure>
+<p>每次发布根据时间戳生成一个release发布号，发布至releases目录下。然后将current目录的soft link指向最新的发布。而第三方依赖、配置、脚本等相对变更频率较低的则放置在shared目录下。</p>
+</li>
+<li><p>使用起停脚本，重启服务。起停脚本以current目录作为working dir根据通过记录在pid目录下的pid文件，当前运行中的进程发送SIGTERM；或者启动程序并记录pid。</p>
+</li>
+</ol>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ol>
+<li>每个服务实例的配置独立，修改时需要逐个修改（接入Nacos可以解决该问题）</li>
+<li>每个服务运行独立，需要手动单独起停（使用运维工具或者编写完善的脚本可以解决该问题）</li>
+<li>整个环境的搭建不算简单，扩容起来不够轻松（环境搭建脚本化）</li>
+<li>日志也是分布在各个服务器上，并没有统一收集（接入ELK）</li>
+</ol>
+<p>尽管各个问题都能单独解决，然而云原生改造可以一口气解决以上所有问题。</p>
+<h2 id="Ruby-on-Rails部署"><a href="#Ruby-on-Rails部署" class="headerlink" title="Ruby on Rails部署"></a>Ruby on Rails部署</h2><ol>
+<li>在跳板机上搭建了专用的git repository</li>
+<li>在本地测试、合并完代码后，<code>git push</code>到跳板机上的git repo</li>
+<li>在跳板机上更新代码到最新</li>
+<li>使用Capistrano工具，<code>cap production deploy</code>部署服务到Web服务器。Capistrano根据定义好的步骤，可以自动ssh到一台或多台远程服务器并安装、启动Ruby on Rails服务。主要流程与上述Java应用的部署类似（因为Java应用的部署我们就是借鉴的Capistrano的标准做法），不同点在于，Ruby on Rails应用通过一个Gemfile（类似maven项目的<code>pom.xml</code>或gradle项目的<code>build.gradle</code>）来管理应用的第三方依赖。Capistrano会在部署过程中执行<code>bundle install</code>确保最新的代码所需的依赖都已安装（而不像Java项目，是在本地下载、获取完依赖，统一打包复制到服务器上）</li>
+<li>Capistrano的部署过程中会自动重启Delayed Job</li>
+<li>我们的Ruby on Rails配合nginx+passenger运行。nginx主要负责http跳转https、静态页面和资源的供给，以及内部使用的后台管理页面的访问控制。</li>
+<li>passenger管理Rails应用服务的进程数量和生命周期等。passenger会监听应用目录下<code>tmp/restart.txt</code>文件的修改时间。Capistrano在部署完成后会执行<code>touch tmp/restart.txt</code>命令更新文件的修改时间，passenger获知之后就会将流量接入新版本的应用上来并结束旧版本应用的进程。这一套组合拳可以保证Rails部署过程中0 downtime</li>
+</ol>
+<p>Ruby on Rails的部署比较流畅，但最大的问题是只有线上会使用nginx+passenger，与本地环境有很大差异，导致开发不了解真正运行的架构。</p>
+<h1 id="改造"><a href="#改造" class="headerlink" title="改造"></a>改造</h1><p>云原生改造最核心的变更在于修改了应用发布的流程和结构。一个云原生服务的程序主要分为4大部分：</p>
+<ol>
+<li>基础镜像</li>
+<li>代码包</li>
+<li>程序配置</li>
+<li>云服务配置</li>
+</ol>
+<p>其中最重要的概念是<strong>基础镜像</strong>和<strong>代码包</strong>的组合。所谓“基础“镜像，就是一个包含了应用代码正常运行，且在正常迭代过程中保持相对稳定的基础环境，以及云应用的容器实例的启动指令<code>entrypoint</code>的Docker镜像。没有代码包，这个镜像并不能正常启动成为一个运行的容器。代码包，对于Java项目来说就是一个包含了所有依赖libs的fatjar，对于Ruby on Rails则会是一个zip包。基础镜像和代码包二者组合在一起就是完整的可运行镜像。</p>
+<p>通过分离了大部分时间下稳定的基础镜像，和频繁变动的代码包，达成的效果则是减少了我们需要提交上传的文件量，不再需要在本地进行频繁的构建。在正常迭代发布过程中，我们只需在提交发布单时指定版本号，上传新的代码包，阿里云平台就会自动将代码包与我们为云应用指定的基础镜像一起进行构建，生成最终运行的镜像。</p>
+<p>用一段Java代码来举例描述它们二者可能会是这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BaseImage rarely changed and stays on the platform</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseImage</span> <span class="keyword">implements</span> <span class="title">Image</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">protected</span> CodePackage codePackage;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Interface method of Image, called by `docker run` when application starts</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">entrypoint</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        codePackage.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// When we deploy a new version of our code, we upload the code package </span></span><br><span class="line"><span class="comment">// then the platform will build the runtime image for us</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Platform</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deploy</span><span class="params">(CodePackage codePackage)</span> </span>&#123;</span><br><span class="line">        Image runnableImage = build(codePackage);</span><br><span class="line">        runImage(runnableImage);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Image <span class="title">build</span><span class="params">(CodePackage codePackage)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> BaseImage(codePackage) &#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">runImage</span><span class="params">(Image runnableImage)</span> </span>&#123;</span><br><span class="line">        runnableImage.entrypoint();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>程序配置</strong>指的是程序本身的配置文件，一般会通过平台提供的配置页面挂在到容器内。</p>
+<p><strong>云服务配置</strong>指的则是包括Kubernetes配置在内的所有描述云服务运行架构状态的配置，如实例数、流量接入配置、日志服务接入配置等等。</p>
+<h1 id="改造流程"><a href="#改造流程" class="headerlink" title="改造流程"></a>改造流程</h1><ol>
+<li>Docker环境安装</li>
+<li>Dockerfile准备<ol>
+<li>Java应用</li>
+<li>Ruby on Rails应用</li>
+</ol>
+</li>
+<li>Java应用配置调整</li>
+<li>Ruby on Rails应用配置调整</li>
+<li>Kubernetes环境安装</li>
+<li>Kubernetes配置准备</li>
+<li>测试</li>
+<li>部署上线</li>
+</ol>
+<h3 id="Docker环境安装"><a href="#Docker环境安装" class="headerlink" title="Docker环境安装"></a>Docker环境安装</h3><ol>
+<li><p>Windows与OSX可以直接通过docker-desktop安装，非常方便：<a href="https://www.docker.com/products/docker-desktop。而Linux环境，在国内通过yum或apt安装的话要先处理源，比较麻烦，推荐直接使用get-docker脚本安装：" target="_blank" rel="noopener">https://www.docker.com/products/docker-desktop。而Linux环境，在国内通过yum或apt安装的话要先处理源，比较麻烦，推荐直接使用get-docker脚本安装：</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL get.docker.com -o get-docker.sh</span><br><span class="line">sudo sh get-docker.sh --mirror Aliyun</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装完毕后将自己的用户添加入docker用户组，否则必须以root用户使用docker：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo usermod -aG docker <span class="variable">$&#123;whoami&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Dockerfile准备"><a href="#Dockerfile准备" class="headerlink" title="Dockerfile准备"></a>Dockerfile准备</h3><h4 id="Java应用"><a href="#Java应用" class="headerlink" title="Java应用"></a>Java应用</h4><p>Java应用是最普遍的云应用，因此官方提供的官方镜像基本就可以直接使用。官方镜像的目录结构是</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">acs</span><br><span class="line">├── code</span><br><span class="line">├── config</span><br></pre></td></tr></table></figure>
+<p>镜像的工作目录是<code>/acs</code>，构建时会将jar包放到<code>/acs/code</code>下，应用的配置文件则挂载至<code>/acs/config</code>下。容器启动时则会以<code>/acs</code>为工作目录，执行<code>java -jar code/app.jar</code>。</p>
+<p>当然，也可以自定义镜像，选择合适的操作系统版本，选择合适的或者魔改的JDK。指定entrypoint执行一个自定义的脚本，脚本同样可以选择挂载到容器内，灵活地在启动时执行指令。比如我们的启动脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exec</span> java <span class="variable">$&#123;JAVA_OPTS&#125;</span> -XX:HeapDumpPath=logs/dump_<span class="variable">$&#123;POD_NAME&#125;</span>_$(date +%F%T).hprof -jar code/app.jar</span><br></pre></td></tr></table></figure>
+<ol>
+<li>执行指令必须要用<code>exec</code>，可以让<code>java -jar</code>命令直接接替当前shell进程，保持PID不变。如果容器运行出现了问题（比如健康检查通不过，亦或者是发生了OOM），K8S杀死进程时，SIGTERM能够正确地发送到java进程中，触发应用的shutdownhook，完成优雅关闭。</li>
+<li><code>${JAVA_OPTS}</code>环境变量是为了方便应用部署时通过环境变量配置JVM参数。</li>
+<li><code>-XX:HeapDumpPath=logs/dump_${POD_NAME}_$(date +%F%T).hprof</code>的参数是在进程OOM时导出heapdump。由于在dump完毕后容器就会重启，因此会需要挂载一个宿主机目录，或者一个网络存储（如NAS）到dump路径。由于运行时会有多个POD，因此通过<code>${POD_NAME}</code>环境变量来区分。这个环境变量需要在后续的Kubernetes配置文件中配置。</li>
+</ol>
+<h4 id="Ruby-on-Rails应用"><a href="#Ruby-on-Rails应用" class="headerlink" title="Ruby on Rails应用"></a>Ruby on Rails应用</h4><p>Ruby on Rails应用的基础镜像与Java应用的不同点主要体现在三个方面：</p>
+<ol>
+<li>环境依赖较多，不像Java镜像，装个JDK就万事大吉</li>
+<li>Rails应用不是以代码包的形式，而是直接以源代码方式部署的</li>
+<li>Rails应用的运行方式借助于nginx与passenger</li>
+</ol>
+<p>话不多说，直接上Dockerfile：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">FROM centos:7.5.1804</span><br><span class="line"></span><br><span class="line">ENV LC_ALL en_US.utf8</span><br><span class="line"></span><br><span class="line">COPY start.sh /bin/start.sh</span><br><span class="line"></span><br><span class="line">WORKDIR /var/www/html</span><br><span class="line"></span><br><span class="line">RUN chmod +x /bin/start.sh \</span><br><span class="line">    &amp;&amp; rm -rf /etc/localtime \</span><br><span class="line">    &amp;&amp; ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \</span><br><span class="line">    &amp;&amp; echo &apos;Asia/Shanghai&apos; &gt; /etc/timezone \</span><br><span class="line">    &amp;&amp; yum install -y zlib-devel openssl-devel pcre pcre-devel make autoconf gcc gcc-c++ curl-devel mysql-devel perl-devel ruby-devel libxml2 libxml2-devel libxslt libxslt-devel libyaml-devel libffi-devel gdbm-devel tcl-devel tk-devel patch readline readline-devel zlib zlib-devel bison mysql \</span><br><span class="line">    &amp;&amp; curl cache.ruby-china.com/pub/ruby/2.1/ruby-2.1.2.tar.gz -o ruby-2.1.2.tar.gz \</span><br><span class="line">    &amp;&amp; tar zxf ruby-2.1.2.tar.gz \</span><br><span class="line">    &amp;&amp; rm -f ruby-2.1.2.tar.gz \</span><br><span class="line">    &amp;&amp; cd ruby-2.1.2 \</span><br><span class="line">    &amp;&amp; ./configure \</span><br><span class="line">    &amp;&amp; make \</span><br><span class="line">    &amp;&amp; make install \</span><br><span class="line">    &amp;&amp; ln -s /usr/local/bin/rake /usr/bin/rake \</span><br><span class="line">    &amp;&amp; cd /var/www/html \</span><br><span class="line">    &amp;&amp; rm -rf ruby-2.1.2 \</span><br><span class="line">    &amp;&amp; gem sources --add https://gems.ruby-china.com/ --remove https://rubygems.org/ \</span><br><span class="line">    &amp;&amp; gem install bundler -v 1.15.4 \</span><br><span class="line">    &amp;&amp; gem install rack -v 1.6.10 \</span><br><span class="line">    &amp;&amp; gem install daemon_controller -v 1.1.0 \</span><br><span class="line">    &amp;&amp; gem install passenger -v 4.0.5 \</span><br><span class="line">    &amp;&amp; passenger-install-nginx-module --auto --auto-download --prefix=/opt/nginx --extra-configure-flags=&quot;--without-http-cache --with-http_ssl_module --with-http_realip_module&quot;</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;/bin/start.sh&quot;]</span><br></pre></td></tr></table></figure>
+<p>为了保证应用稳定，因此选择了与当前生产环境相同的CentOS系统版本作为基础，ruby、passenger版本也都保证一致。主要完成了系统组件（<code>yum install</code>），ruby，passenger（<code>gem install passenger</code>），nginx（<code>passenger-install-nginx-module</code>）的安装。</p>
+<p><code>passenger-install-nginx-module</code>的作用是，在完成passenger安装后可以使用该命令安装配套的nginx模块。有以下几个注意点：</p>
+<ol>
+<li>需要指定<code>--auto</code>避免默认的交互性的安装过程</li>
+<li>通过<code>--prefix</code>指定nginx的安装目录（默认即为<code>/opt/nginx</code>）</li>
+<li><code>--extra-configure-flags</code>用于指定安装过程中，<strong>需要传递给nginx</strong>的安装参数。其中<code>--with-http_realip_module</code>是因为Web的应用管理后台做了IP白名单保护，指定只有公司的IP可以访问。当Web应用迁入云原生环境后，nginx直接获取到的IP将全都为云原生集群流量接入的SLB的IP，因此需要通过该模块获取真实IP</li>
+</ol>
+<p><code>start.sh</code>脚本的内容非常简单，运行一个真正启动应用的脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/bash /bin/application.sh</span><br></pre></td></tr></table></figure>
+<p>这样做的目的是因为这个镜像将会被两种云应用共享使用：一个是Ruby on Rails的Web应用，另一个也是Ruby on Rails，但是专门运行Delayed Job的后台应用。它们需要同样的环境，但是启动命令有所不同。通过这样的方式可以在部署云应用时动态挂载不同的<code>application.sh</code>达到启动不同的应用的目的。</p>
+<p>但到这里基础镜像还未构建完，Ruby on Rails应用的依赖Gem还未安装。在长期的应用开发过程中，上一个Dockerfile中的内容几乎稳定不变，而Gem依赖还是比较有可能会变化的，因此将这一步单独拆分了出来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FROM centos7.5-ruby2.1.2:1.0</span><br><span class="line"></span><br><span class="line">COPY Gemfile* ./</span><br><span class="line"></span><br><span class="line">RUN gem sources --add https://gems.ruby-china.com/ --remove https://rubygems.org/ \</span><br><span class="line">    &amp;&amp; bundle install</span><br></pre></td></tr></table></figure>
+<p>在实际构建时，需要获取最新的项目代码中的Gemfile来进行</p>
+<h1 id="未完待续……"><a href="#未完待续……" class="headerlink" title="未完待续……"></a>未完待续……</h1>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://music.163.com/song/media/outer/url?id=528484544.mp3"></li>
+                    
+                        <li title="1" data-url="http://music.163.com/song/media/outer/url?id=33111211.mp3"></li>
+                    
+                        <li title="2" data-url="http://music.163.com/song/media/outer/url?id=526101400.mp3"></li>
+                    
+                        <li title="3" data-url="http://music.163.com/song/media/outer/url?id=32272663.mp3"></li>
+                    
+                        <li title="4" data-url="http://music.163.com/song/media/outer/url?id=526103091.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="false" data-ci="950f83c861604d6a6bd3" data-cs="eb99ef07f83ce12506511020ff04384b35e3f201" data-r="cMc-Enhancer.github.io" data-o="cMc-Enhancer" data-a="cMc-Enhancer" data-d="false">查看评论</div>
+
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#阿里云聚石塔云原生迁移"><span class="toc-number">1.</span> <span class="toc-text">阿里云聚石塔云原生迁移</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#项目结构"><span class="toc-number">2.</span> <span class="toc-text">项目结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#改造前"><span class="toc-number">3.</span> <span class="toc-text">改造前</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java部署"><span class="toc-number">3.1.</span> <span class="toc-text">Java部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">3.1.1.</span> <span class="toc-text">问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ruby-on-Rails部署"><span class="toc-number">3.2.</span> <span class="toc-text">Ruby on Rails部署</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#改造"><span class="toc-number">4.</span> <span class="toc-text">改造</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#改造流程"><span class="toc-number">5.</span> <span class="toc-text">改造流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Docker环境安装"><span class="toc-number">5.0.1.</span> <span class="toc-text">Docker环境安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dockerfile准备"><span class="toc-number">5.0.2.</span> <span class="toc-text">Dockerfile准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Java应用"><span class="toc-number">5.0.2.1.</span> <span class="toc-text">Java应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Ruby-on-Rails应用"><span class="toc-number">5.0.2.2.</span> <span class="toc-text">Ruby on Rails应用</span></a></li></ol></li></ol></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#未完待续……"><span class="toc-number">6.</span> <span class="toc-text">未完待续……</span></a></li>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-139406135-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>
